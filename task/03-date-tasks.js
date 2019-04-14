@@ -22,7 +22,7 @@
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
 function parseDataFromRfc2822(value) {
-   throw new Error('Not implemented');
+   return Date.parse(value);
 }
 
 /**
@@ -37,7 +37,7 @@ function parseDataFromRfc2822(value) {
  *    '2016-01-19T08:07:37Z' => Date()
  */
 function parseDataFromIso8601(value) {
-   throw new Error('Not implemented');
+   return new Date(value);
 }
 
 
@@ -56,7 +56,11 @@ function parseDataFromIso8601(value) {
  *    Date(2015,1,1)    => false
  */
 function isLeapYear(date) {
-   throw new Error('Not implemented');
+   const year = date.getFullYear();
+   if (year % 4 !== 0) return false;
+   else if (year % 100 !== 0) return true;
+   else if (year % 400 !== 0) return false;
+   else return true;
 }
 
 
@@ -76,14 +80,22 @@ function isLeapYear(date) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
 function timeSpanToString(startDate, endDate) {
-   throw new Error('Not implemented');
+   const diff = endDate.getTime() - startDate.getTime();
+
+   const hours = Math.floor(diff / (3600 * 1000));
+   const minutes = Math.floor((diff % (3600 * 1000)) / (60 * 1000));
+   const seconds = Math.floor((diff % (60 * 1000) / 1000));
+   const mseconds = (diff % 1000);
+   console.log(hours, minutes, seconds, mseconds)
+
+   return `${ hours < 10 ? `0${hours}` : hours }:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}.${mseconds < 10 ? `00${mseconds}` : mseconds < 100 ? `0${mseconds}` : mseconds}`;
 }
 
 
 /**
  * Returns the angle (in radians) between the hands of an analog clock for the specified Greenwich time.
  * If you have problem with solution please read: https://en.wikipedia.org/wiki/Clock_angle_problem
- * 
+ *
  * @param {date} date
  * @return {number}
  *
@@ -94,7 +106,21 @@ function timeSpanToString(startDate, endDate) {
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
 function angleBetweenClockHands(date) {
-    throw new Error('Not implemented');
+   var hours = date.getUTCHours() % 12;   
+   var minutes = date.getUTCMinutes();
+
+   var hHandSpeed = 360 / (12 * 60);
+   var mHandSpeed = 360 / 60;
+
+   var hPos = (hours * 60 + minutes) * hHandSpeed;
+   var mPos = minutes * mHandSpeed;
+   
+   var angleRadian = Math.abs(hPos - mPos);
+   if (angleRadian > 180) {
+     angleRadian = 360 - angleRadian;
+   }
+   angleRadian = angleRadian * Math.PI / 180;
+   return angleRadian;
 }
 
 
